@@ -1,7 +1,5 @@
 # TODO:
-# wait for answers from Gcinizwe
 # do all things connected with Activity assignment
-# check if time intervals works with saving/loading
 # think about possibility of file uploading-downloading in bot
 # start making a bot
 
@@ -22,10 +20,10 @@ class EdInstitution:
         '''
 
     def get_available_classrooms(self):
-        return set([room.number for room in self.classrooms if room.is_free()])
+        return set([room.number for room in self.classrooms if room.is_free_today()])
 
     def get_available_auditoriums(self):
-        return set([room.number for room in self.lecture_auditoriums if room.is_free()])
+        return set([room.number for room in self.lecture_auditoriums if room.is_free_today()])
 
     def saveToFile(self, filename='data.json'):
         with open(filename, "w") as outfile:
@@ -84,12 +82,27 @@ class Room:
         Conditioner: {'Yes' if self.conditioner else 'No'}
         '''.replace('    ', '')
 
-    def is_free(self):
+    def is_free_today(self):
         # TODO:
-        # should we have real-time update?
-        # make decision
-        # realize it here
+        # should we have real-time update? - yes we should
+        today = 0 # classify today somehow
+        t_from = today + 8*60
+        t_to = today + 21*60
+        return self.is_free(t_from, t_to)
+
+    def is_free(self, t_from, t_to):
+        # TODO:
+        # make an algorithm
         return True
+
+    def assign_activity(self, t_from, t_to, amount_of_people):
+        if self.is_free(t_from, t_to) and self.capacity >= amount_of_people:
+            self.activities.append([t_from, t_to])
+            return True
+        else:
+            return False
+
+    
 
 class Classroom(Room):
     pass
@@ -99,14 +112,17 @@ class LectureAuditorium(Room):
 
 
 if __name__ == '__main__':
+
+    
+    qwe = LectureAuditorium(1, 1, True)
     innop = EdInstitution('Innopolis University', set([Classroom(100, 108, True), Classroom(20, 304, False)]))
+    print(qwe.assign_activity(10, 20, 1))
+    print(innop.add(qwe))
     print(innop)
     innop.saveToFile('data.json')
     innop = EdInstitution.restoreFromFile('data.json')
     print(innop)
 
-    qwe = LectureAuditorium(1, 1, True)
-    print(innop.add(qwe))
     print(innop)
     # print(innop.remove(qwe))
     # print(innop)
