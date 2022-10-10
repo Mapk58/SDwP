@@ -45,6 +45,9 @@ class EdInstitution:
             return 'Lecture auditorium successfully added!'
     
     def remove(self, room):
+        '''
+        
+        '''
         if type(room).__name__ == 'Classroom':
             if room in self.classrooms:
                 self.classrooms.remove(room)
@@ -70,10 +73,10 @@ class EdInstitution:
 
 class Room:
     def __init__(self, capacity, number, conditioner, activities=[]):
-        self.capacity = capacity
-        self.number = number
-        self.conditioner = conditioner
-        self.activities = activities
+        self.capacity = capacity #how much people may be in, int
+        self.number = number #auditory number, string
+        self.conditioner = conditioner #conditioner state, bool
+        self.activities = activities #list of begin and end of order time, list of lists [[begin_time,end_time],[begin_time,end_time]]
     
     def __str__(self):
         return f'''{type(self).__name__}
@@ -83,6 +86,9 @@ class Room:
         '''.replace('    ', '')
 
     def is_free_today(self):
+        '''
+        check for any book for day, return bool
+        '''
         # TODO:
         # should we have real-time update? - yes we should
         today = 0 # classify today somehow
@@ -91,11 +97,17 @@ class Room:
         return self.is_free(t_from, t_to)
 
     def is_free(self, t_from, t_to):
+        '''
+        check for specific time, return bool
+        '''
         # TODO:
         # make an algorithm
         return True
 
     def assign_activity(self, t_from, t_to, amount_of_people):
+        '''
+        book room for time for amount peoples
+        '''
         if self.is_free(t_from, t_to) and self.capacity >= amount_of_people:
             self.activities.append([t_from, t_to])
             return True
