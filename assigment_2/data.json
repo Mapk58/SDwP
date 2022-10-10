@@ -1,0 +1,1 @@
+{"name": "Innopolis University", "classrooms": [{"capacity": 100, "number": 108, "conditioner": true, "activities": [[10, 20]]}, {"capacity": 20, "number": 304, "conditioner": false, "activities": [[10, 20]]}], "lecture_auditoriums": [{"capacity": 1, "number": 1, "conditioner": true, "activities": [[10, 20]]}]}
