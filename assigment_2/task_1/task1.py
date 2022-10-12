@@ -1,7 +1,5 @@
 # TODO:
-# do all things connected with Activity assignment
 # think about possibility of file uploading-downloading in bot
-# start making a bot
 
 # Oleg:
 # Task 2: we should be able to swap between institutions. Class Room should have instance to EdInstitution to
@@ -14,6 +12,7 @@
 # Oleg - Add docstrings and to do tasks
 
 import json
+from datetime import datetime
 
 class EdInstitution:
     def __init__(self, name, classrooms=set(), lecture_auditoriums=set()):
@@ -139,17 +138,24 @@ class Room:
         '''.replace('    ', '')
 
     def is_free_today(self):
-        # TODO:
-        # should we have real-time update? - yes we should
-        today = 0 # classify today somehow
-        t_from = today + 8*60
-        t_to = today + 21*60
+        today = datetime.timestamp(datetime.now()) - datetime.timestamp(datetime.now())%(60*60*24)#-60*60*3
+        t_from = today + 8*60*60
+        t_to = today + 21*60*60
+        # print(datetime.fromtimestamp(t_from))
+        # print(datetime.fromtimestamp(t_to))
         return self.is_free(t_from, t_to)
 
     def is_free(self, t_from, t_to):
-        # TODO:
-        # make an algorithm
-        return True
+        print(self.activities)
+        print(t_from)
+        print(t_to)
+        not_intersected = 0
+        for interval in self.activities:
+            if (interval[1] <= t_from or interval[0] >= t_to):
+                not_intersected += 1
+        if (len(self.activities) == not_intersected):
+            return True
+        return False
 
     def assign_activity(self, t_from, t_to, amount_of_people):
         if self.is_free(t_from, t_to) and self.capacity >= amount_of_people:
@@ -168,21 +174,7 @@ class LectureAuditorium(Room):
 
 
 if __name__ == '__main__':
-
-    
     qwe = LectureAuditorium(1, 1, True)
-    innop = EdInstitution('Innopolis University', set([Classroom(100, 108, True), Classroom(20, 304, False)]))
-    print(qwe.assign_activity(10, 20, 1))
-    print(innop.add(qwe))
-    print(innop)
-    innop.saveToFile('data.json')
-    innop = EdInstitution.restoreFromFile('data.json')
-    print(innop)
-
-    print(innop)
-    # print(innop.remove(qwe))
-    # print(innop)
-    # print(innop.remove(qwe))
-    # print(innop)
-
-    print(innop.all_rooms())
+    qwe.assign_activity(datetime.timestamp(datetime.now()),datetime.timestamp(datetime.now())+1000,1)
+    print('----')
+    print(qwe.is_free_today())
