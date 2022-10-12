@@ -1,7 +1,6 @@
 # TODO:
 # think about possibility of file uploading-downloading in bot
 
-
 import json
 from datetime import datetime
 
