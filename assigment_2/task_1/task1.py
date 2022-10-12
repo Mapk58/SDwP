@@ -85,9 +85,6 @@ class Room:
         return self.is_free(t_from, t_to)
 
     def is_free(self, t_from, t_to):
-        print(self.activities)
-        print(t_from)
-        print(t_to)
         not_intersected = 0
         for interval in self.activities:
             if interval[1] <= t_from or interval[0] >= t_to:
@@ -97,11 +94,14 @@ class Room:
         return False
 
     def assign_activity(self, t_from, t_to, amount_of_people):
-        if self.is_free(t_from, t_to) and self.capacity >= amount_of_people:
-            self.activities.append([t_from, t_to])
-            return True
-        else:
-            return False
+        if not self.is_free(t_from, t_to):
+            return "This time is occupied. Choose another one."
+
+        if self.capacity < amount_of_people:
+            return "Choose less number of people."
+
+        self.activities.append([t_from, t_to])
+        return "Activity successfully added!"
 
 
 class Classroom(Room):
@@ -113,7 +113,7 @@ class LectureAuditorium(Room):
 
 
 class InstituteManager:
-    def __new__(cls):
+    def __new__(cls, institutions=[]):
         if not hasattr(cls, 'instance'):
             cls.instance = super().__new__(cls)
         return cls.instance
@@ -126,15 +126,15 @@ class InstituteManager:
 
     def save_to_file(self, filename='data.json'):
         with open(filename, "w") as outfile:
-            json.dump([i.__dict__ for i in self.institutions], outfile)
+            json.dump([i.__dict__() for i in self.institutions], outfile)
 
     def restore_from_file(filename='data.json'):
         with open(filename) as json_file:
             institutions = json.load(json_file)
-        return InstituteManager([EdInstitution.restoreFromDict(i) for i in institutions])
+        return InstituteManager([EdInstitution.restore_from_dict(i) for i in institutions])
 
     def __str__(self):
-        return [str(i) for i in self.institutions]
+        return '\n'.join([str(i) for i in self.institutions])
 
 
 if __name__ == '__main__':
@@ -144,6 +144,17 @@ if __name__ == '__main__':
     qwe2 = LectureAuditorium(20, 1, True)
     Innopolis.add(qwe2)
 
+    B = EdInstitution("B")
+    B.add(qwe2)
+
+    # a = InstituteManager()
+    # a.add(Innopolis)
+    # a.add(B)
+    # print(a)
+
+    # a.save_to_file()
+    k = InstituteManager.restore_from_file()
+    print(k)
 
     # qwe.assign_activity(datetime.timestamp(datetime.now()), datetime.timestamp(datetime.now()) + 1000, 1)
     # print('----')
