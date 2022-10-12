@@ -63,13 +63,38 @@ class EdInstitution:
     def all_rooms(self):
         return self.all_classrooms() + '\n' + self.all_auditoriums()
 
+    def assign_activity_to_room(self, number, t_from, t_to, amount_of_people, type_of_room):
+        rooms = set()
+        if type_of_room == 'Classroom':
+            rooms = self.classrooms
+        elif type_of_room == 'Auditorium':
+            rooms = self.lecture_auditoriums
+
+        for i in rooms:
+            if i.number == number:
+                return i.assign_activity(t_from, t_to, amount_of_people)
+        return 'Please insert valid number of the room!'
+
+    def assign_activity_to_classroom(self, number, t_from, t_to, amount_of_people):
+        return self.assign_activity_to_room(number, t_from, t_to, amount_of_people, 'Classroom')
+
+    def assign_activity_to_auditorium(self, number, t_from, t_to, amount_of_people):
+        return self.assign_activity_to_room(number, t_from, t_to, amount_of_people, 'Auditorium')
+
+
+
+
+
 
 class Room:
-    def __init__(self, capacity, number, conditioner, activities=[]):
+    def __init__(self, capacity, number, conditioner, activities=None):
         self.capacity = capacity
         self.number = number
         self.conditioner = conditioner
-        self.activities = activities
+        if activities is None:
+            self.activities = []
+        else:
+            self.activities = activities
 
     def __str__(self):
         return f'''{type(self).__name__}
@@ -94,6 +119,7 @@ class Room:
         return False
 
     def assign_activity(self, t_from, t_to, amount_of_people):
+        print(f'Adding activity to room {self.number}')
         if not self.is_free(t_from, t_to):
             return "This time is occupied. Choose another one."
 
@@ -141,20 +167,23 @@ if __name__ == '__main__':
     Innopolis = EdInstitution("Innopolis")
     qwe = LectureAuditorium(1, 1, True)
     Innopolis.add(qwe)
-    qwe2 = LectureAuditorium(20, 1, True)
+    qwe2 = LectureAuditorium(20, 20, True)
     Innopolis.add(qwe2)
 
-    B = EdInstitution("B")
-    B.add(qwe2)
+    print(Innopolis.assign_activity_to_auditorium(1, 10, 20, 1))
 
+    for i in Innopolis.lecture_auditoriums:
+        print(i.activities)
+    # B = EdInstitution("B")
+    # B.add(qwe2)
+    #
     # a = InstituteManager()
     # a.add(Innopolis)
     # a.add(B)
-    # print(a)
-
+    #
     # a.save_to_file()
-    k = InstituteManager.restore_from_file()
-    print(k)
+    # k = InstituteManager.restore_from_file()
+    # print(k)
 
     # qwe.assign_activity(datetime.timestamp(datetime.now()), datetime.timestamp(datetime.now()) + 1000, 1)
     # print('----')
