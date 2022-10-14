@@ -82,10 +82,6 @@ class EdInstitution:
         return self.assign_activity_to_room(number, t_from, t_to, amount_of_people, 'Auditorium')
 
 
-
-
-
-
 class Room:
     def __init__(self, capacity, number, conditioner, activities=None):
         self.capacity = capacity
@@ -139,41 +135,48 @@ class LectureAuditorium(Room):
 
 
 class InstituteManager:
-    def __new__(cls, institutions=[]):
+    def __new__(cls):
         if not hasattr(cls, 'instance'):
             cls.instance = super().__new__(cls)
         return cls.instance
 
-    def __init__(self, institutions=[]):
-        self.institutions = institutions
+    def __init__(self):
+        with open('data/data.json') as json_file:
+            institutions = json.load(json_file)
+        self.institutions = [EdInstitution.restore_from_dict(i) for i in institutions]
 
     def add(self, institute):
-        self.institutions.append(institute)
+        self.institutions.append(EdInstitution(institute))
 
-    def save_to_file(self, filename='data.json'):
+    def save_to_file(self, filename='data/data.json'):
         with open(filename, "w") as outfile:
             json.dump([i.__dict__() for i in self.institutions], outfile)
-
-    def restore_from_file(filename='data.json'):
-        with open(filename) as json_file:
-            institutions = json.load(json_file)
-        return InstituteManager([EdInstitution.restore_from_dict(i) for i in institutions])
 
     def __str__(self):
         return '\n'.join([str(i) for i in self.institutions])
 
+    def get_institute_names(self):
+        return [i.name for i in self.institutions]
+
+    def institute(self, name):
+        return [i for i in self.institutions if i.name == name][0]
+
+
+manager = InstituteManager()
+
 
 if __name__ == '__main__':
     Innopolis = EdInstitution("Innopolis")
-    qwe = LectureAuditorium(1, 1, True)
-    Innopolis.add(qwe)
-    qwe2 = LectureAuditorium(20, 20, True)
-    Innopolis.add(qwe2)
+    Innopolis.add(LectureAuditorium(10, 108, True))
+    Innopolis.add(LectureAuditorium(20, 304, True))
 
-    print(Innopolis.assign_activity_to_auditorium(1, 10, 20, 1))
+    print(Innopolis.assign_activity_to_auditorium(108, 10, 20, 1))
 
-    for i in Innopolis.lecture_auditoriums:
-        print(i.activities)
+    manager = InstituteManager([Innopolis])
+
+    manager = InstituteManager.restore_from_file()
+    print(manager.institute(manager.get_institute_names()[0]))
+
     # B = EdInstitution("B")
     # B.add(qwe2)
     #
