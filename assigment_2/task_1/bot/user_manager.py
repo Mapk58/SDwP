@@ -1,9 +1,10 @@
 import json
 
 class User:
-    def __init__(self, state='very_beginning', input=''):
+    def __init__(self, state='very_beginning', input='', uni=''):
         self.state = state
         self.input = input
+        self.uni = uni
 
 class Users:
     def __init__(self):
@@ -19,7 +20,6 @@ class Users:
                 json.dump({i:self._users[i].__dict__ for i in self._users.keys()}, outfile)
         
         return wrapper
-
 
     def get_state(self, id):
         return self._users[str(id)].state
@@ -42,6 +42,13 @@ class Users:
     @save_to_file
     def clear_input(self, id):
         self._users[str(id)].input = ''
+
+    def get_uni(self, id):
+        return self._users[str(id)].uni
+    
+    @save_to_file
+    def set_uni(self, id, uni):
+        self._users[str(id)].uni = uni
 
 users = Users()
 
