@@ -8,8 +8,12 @@ import time
 import json
 import message_handler as mh
 import markup_maker as mm
+import os
 
-token = ''
+token = os.environ.get('BOT_TOKEN')
+if token==None:
+    print('Environment value trouble! Shutting down...')
+    exit()
 bot = telebot.TeleBot(token)
 users = {}
 with open('data/users.json') as json_file:
