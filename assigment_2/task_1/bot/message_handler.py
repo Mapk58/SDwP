@@ -16,8 +16,12 @@ def handle_message(id, m):
         if text=='Create new university':
             reply = 'Enter the name of the university:'
             new_status = 'creating_university'
+        elif text=='Save':
+            reply = 'Successfully saved!'
+            new_status = 'choose_university'
+            manager.save_to_file()
         else:
-            reply = str(manager.institute(text)) + '\n\nChoose one operation from below:' # add existance check 
+            reply = 'Choose one operation from below:' # add existance check 
             um.users.set_uni(id, text)
             new_status = 'menu'
     elif status == 'creating_university':
@@ -28,6 +32,9 @@ def handle_message(id, m):
         if text=='Return to universities':
             reply = 'Choose one university from below or create a new one: \n' + ('\n'.join(manager.get_institute_names()))
             new_status = 'choose_university'
+        elif text=='Print institution summary':
+            reply = str(manager.institute(um.users.get_uni(id)))
+            new_status = 'menu'
         else:
             reply = 'Still under construction :('
             new_status = 'menu'
