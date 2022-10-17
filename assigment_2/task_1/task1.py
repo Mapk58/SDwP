@@ -3,10 +3,17 @@ from datetime import datetime
 
 
 class EdInstitution:
-    def __init__(self, name, classrooms=set(), lecture_auditoriums=set()):
+    def __init__(self, name, classrooms=None, lecture_auditoriums=None):
         self.name = name
-        self.classrooms = classrooms
-        self.lecture_auditoriums = lecture_auditoriums
+        if classrooms is None:
+            self.classrooms = set()
+        else:
+            self.classrooms = classrooms
+
+        if lecture_auditoriums is None:
+            self.lecture_auditoriums = set()
+        else:
+            self.lecture_auditoriums = lecture_auditoriums
 
     def __str__(self):
         return f'''{self.name}
@@ -100,9 +107,10 @@ class Room:
         '''.replace('    ', '')
 
     def is_free_today(self):
-        today = datetime.timestamp(datetime.now()) - datetime.timestamp(datetime.now()) % (60 * 60 * 24)  # -60*60*3
+        today = datetime.timestamp(datetime.now()) - datetime.timestamp(datetime.now()) % (60 * 60 * 24) -60*60*3
         t_from = today + 8 * 60 * 60
         t_to = today + 21 * 60 * 60
+        print(t_from, t_to)
         return self.is_free(t_from, t_to)
 
     def is_free(self, t_from, t_to):
@@ -117,7 +125,7 @@ class Room:
     def assign_activity(self, t_from, t_to, amount_of_people):
         print(f'Adding activity to room {self.number}')
         if not self.is_free(t_from, t_to):
-            return "This time is occupied. Choose another one."
+            return "This time is occupied."
 
         if self.capacity < amount_of_people:
             return "Choose less number of people."
@@ -166,16 +174,14 @@ manager = InstituteManager()
 
 
 if __name__ == '__main__':
-    Innopolis = EdInstitution("Innopolis")
-    Innopolis.add(LectureAuditorium(10, 108, True))
-    Innopolis.add(LectureAuditorium(20, 304, True))
+    # Innopolis = EdInstitution("Innopolis")
+    # Innopolis.add(LectureAuditorium(10, 108, True))
+    # Innopolis.add(LectureAuditorium(20, 304, True))
+    #
+    # print(Innopolis.assign_activity_to_auditorium(108, 10, 20, 1))
 
-    print(Innopolis.assign_activity_to_auditorium(108, 10, 20, 1))
-
-    manager = InstituteManager([Innopolis])
-
-    manager = InstituteManager.restore_from_file()
-    print(manager.institute(manager.get_institute_names()[0]))
+    # print(i.is_free_today() for i in manager[1].classrooms)
+    print([i.is_free_today() for i in manager.institutions[1].classrooms])
 
     # B = EdInstitution("B")
     # B.add(qwe2)
