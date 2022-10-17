@@ -1,0 +1,10 @@
+certifi           
+charset-normalizer
+idna              
+pip               
+pyTelegramBotAPI  
+requests          
+setuptools        
+urllib3           
+wheel             
+wincertstore      
