@@ -16,13 +16,23 @@ bot = telebot.TeleBot(token)
 # Processing /start command
 @bot.message_handler(commands=["start"])
 def start(m, res=False):
+    """
+    Function that processes the '/start' command.
+    """
+
     um.users.add_user(m.chat.id)
-    reply = 'Hello! You have launched the bot created as part of the second task of the SDwP course. Now you can select or create a university, add rooms and assign activities. The source code is here: https://github.com/Mapk58/SDwP'
+    reply = 'Hello! You have launched the bot created as part of the second task of the SDwP course. \
+                Now you can select or create a university, add rooms and assign activities. \
+                    The source code is here: https://github.com/Mapk58/SDwP'
     bot.send_message(m.chat.id, reply, reply_markup=mm.create_markup(um.users.get_state(m.chat.id)))
 
 # Processing text messages
 @bot.message_handler(content_types=["text"])
 def handle_text(m):
+    """
+    Function that processes commands received from user.
+    """
+
     print(m.text)
     reply, markup = mh.handle_message(m.chat.id, m)
     bot.send_message(m.chat.id, reply, reply_markup=markup)

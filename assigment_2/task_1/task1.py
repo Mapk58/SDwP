@@ -143,15 +143,19 @@ class LectureAuditorium(Room):
 
 
 class InstituteManager:
+    flag = False
+
     def __new__(cls):
         if not hasattr(cls, 'instance'):
             cls.instance = super().__new__(cls)
         return cls.instance
 
     def __init__(self):
-        with open('data/data.json') as json_file:
-            institutions = json.load(json_file)
-        self.institutions = [EdInstitution.restore_from_dict(i) for i in institutions]
+        if not self.flag:
+            with open('data/data.json') as json_file:
+                institutions = json.load(json_file)
+            self.institutions = [EdInstitution.restore_from_dict(i) for i in institutions]
+            self.flag = True
 
     def add(self, institute):
         self.institutions.append(EdInstitution(institute))

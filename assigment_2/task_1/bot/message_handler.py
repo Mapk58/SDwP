@@ -7,8 +7,15 @@ from task1 import manager, Classroom, LectureAuditorium
 
 
 def check_time(text):
+    """
+    Function for checking time on validity.
+    :param text: contains string of time range
+    :return: results of conditions.
+    """
+
     text = text.replace(' ', '')
-    result0 = bool(re.search('^([0-1]?[0-9]|2[0-3]):[0-5][0-9]-([0-1]?[0-9]|2[0-3]):[0-5][0-9]$', text))
+    result0 = bool(re.search(
+        '^([0-1]?[0-9]|2[0-3]):[0-5][0-9]-([0-1]?[0-9]|2[0-3]):[0-5][0-9]$', text))
     result1 = False
     result2 = False
     if result0:
@@ -16,13 +23,20 @@ def check_time(text):
         t_from_hour, t_from_minute = t_from.split(":")
         t_to_hour, t_to_minute = t_to.split(":")
         result1 = int(t_from_hour) == int(t_to_hour) and int(t_from_minute) < int(t_to_minute) \
-                  or int(t_from_hour) < int(t_to_hour)
+            or int(t_from_hour) < int(t_to_hour)
         result2 = 8 <= int(t_from_hour) < 21 and 8 <= int(t_to_hour) < 21 or \
-                  8 <= int(t_from_hour) < 21 and int(t_to_hour) == 21 and int(t_to_minute) == 0
+            8 <= int(t_from_hour) < 21 and int(
+                t_to_hour) == 21 and int(t_to_minute) == 0
     return result0, result1, result2
 
 
 def parameters_room(user_input):
+    """
+    Function for getting the parameters for creating Classroom/LectureAuditorium.
+    :param user_input: contains params, which will be parsed to particular variables
+    :return: parameters
+    """
+
     user_input = user_input.split(' ')
     capacity = int(user_input[1])
     number = int(user_input[0])
@@ -30,14 +44,23 @@ def parameters_room(user_input):
 
     return capacity, number, conditioner
 
+
 def parameters_activity(user_input):
+    """
+    Function for getting the parameters of assign_activity_to... method.
+    :param user_input: contains params, which will be parsed to particular variables
+    :return: parameters
+    """
+
     user_input = user_input.split(' ')
     number = int(user_input[0])
     day, month, year = user_input[1].split("/")
     t_from_hour, t_from_minute = user_input[2].split(":")
     t_to_hour, t_to_minute = user_input[3].split(":")
-    t_from = datetime(int(year), int(month), int(day), int(t_from_hour), int(t_from_minute))
-    t_to = datetime(int(year), int(month), int(day), int(t_to_hour), int(t_to_minute))
+    t_from = datetime(int(year), int(month), int(
+        day), int(t_from_hour), int(t_from_minute))
+    t_to = datetime(int(year), int(month), int(
+        day), int(t_to_hour), int(t_to_minute))
     t_from = time.mktime(t_from.timetuple())
     t_to = time.mktime(t_to.timetuple())
     capacity = int(user_input[4])
@@ -46,6 +69,11 @@ def parameters_activity(user_input):
 
 
 def handle_message(id, m):
+    """
+    Processing comands received from the user, based on their current status.
+    :return: reply to user and markup according to his status.
+    """
+
     text = m.text
     markup = None
     status = um.users.get_state(id)
@@ -53,7 +81,8 @@ def handle_message(id, m):
     reply = 'Wrong command, try again!'
 
     if status == 'very_beginning' and text == "Let's start!":
-        reply = 'Choose one university from below or create a new one: \n' + ('\n'.join(manager.get_institute_names()))
+        reply = 'Choose one university from below or create a new one: \n' + \
+            ('\n'.join(manager.get_institute_names()))
         new_status = 'choose_university'
     elif status == 'choose_university':
         if text == 'Create new university':
@@ -83,31 +112,34 @@ def handle_message(id, m):
             reply = str(manager.institute(um.users.get_uni(id)))
             new_status = 'menu'
         elif text == 'Assign activity to classroom':
-            all_classrooms = ''.join(manager.institute(um.users.get_uni(id)).all_classrooms())
+            all_classrooms = ''.join(manager.institute(
+                um.users.get_uni(id)).all_classrooms())
             if all_classrooms == '':
-                reply = '''There is no Classrooms yet. If you want to create it, choose the button "Add Classroom or Auditorium to institution"
+                reply = '''There is no Classrooms yet. If you want to create it, \
+                            choose the button "Add Classroom or Auditorium to institution"
                         '''
                 new_status = 'menu'
             else:
-                reply = (''.join(manager.institute(um.users.get_uni(id)).all_classrooms())) + \
-                        '\n Choose number of Classroom from the list above:'
+                reply = all_classrooms + '\n Choose number of Classroom from the list above:'
                 new_status = 'enter_number_of_classroom'
         elif text == 'Assign activity to LectureAuditorium':
-            all_auditoriums = ''.join(manager.institute(um.users.get_uni(id)).all_auditoriums())
+            all_auditoriums = ''.join(manager.institute(
+                um.users.get_uni(id)).all_auditoriums())
             if all_auditoriums == '':
-                reply = '''There is no Auditoriums yet. If you want to create it, choose the button "Add Classroom or Auditorium to institution".
+                reply = '''There is no Auditoriums yet. If you want to create it, \
+                            choose the button "Add Classroom or Auditorium to institution".
                         '''
                 new_status = 'menu'
             else:
-                reply = (''.join(manager.institute(um.users.get_uni(id)).all_auditoriums())) + \
-                        '\n Choose number of Auditorium from the list above:'
+                reply = all_auditoriums + '\n Choose number of Auditorium from the list above:'
                 new_status = 'enter_number_of_auditorium'
         elif text == 'Return to universities':
             reply = 'Choose one university from below or create a new one: \n' + (
                 '\n'.join(manager.get_institute_names()))
             new_status = 'choose_university'
         elif text == 'Exit program':
-            reply = (''.join(str(manager))) + "Don't forget to Save information"
+            reply = (''.join(str(manager))) + \
+                "Don't forget to Save information"
             new_status = 'choose_university'
         else:
             reply = 'Choose one operation from below:'
@@ -144,7 +176,8 @@ def handle_message(id, m):
     elif status == 'do_you_want_air_conditioning_classroom':
         if text == 'Yes' or text == 'No':
             um.users.add_input(id, text)
-            capacity, number, conditioner = parameters_room(um.users.get_input(id))
+            capacity, number, conditioner = parameters_room(
+                um.users.get_input(id))
             classroom = Classroom(capacity, number, conditioner)
             manager.institute(um.users.get_uni(id)).add(classroom)
             um.users.clear_input(id)
@@ -173,7 +206,8 @@ def handle_message(id, m):
     elif status == 'do_you_want_air_conditioning_auditorium':
         if text == 'Yes' or text == 'No':
             um.users.add_input(id, text)
-            capacity, number, conditioner = parameters_room(um.users.get_input(id))
+            capacity, number, conditioner = parameters_room(
+                um.users.get_input(id))
             auditorium = LectureAuditorium(capacity, number, conditioner)
             manager.institute(um.users.get_uni(id)).add(auditorium)
             um.users.clear_input(id)
@@ -246,7 +280,8 @@ def handle_message(id, m):
     elif status == 'enter_capacity_classroom':
         if text.isnumeric():
             um.users.add_input(id, text)
-            number, t_from, t_to, capacity = parameters_activity(um.users.get_input(id))
+            number, t_from, t_to, capacity = parameters_activity(
+                um.users.get_input(id))
 
             result = manager.institute(um.users.get_uni(id)).assign_activity_to_classroom(number, t_from, t_to,
                                                                                           capacity)
@@ -313,7 +348,8 @@ def handle_message(id, m):
     elif status == 'enter_capacity_auditorium':
         if text.isnumeric():
             um.users.add_input(id, text)
-            number, t_from, t_to, capacity = parameters_activity(um.users.get_input(id))
+            number, t_from, t_to, capacity = parameters_activity(
+                um.users.get_input(id))
 
             result = manager.institute(um.users.get_uni(id)).assign_activity_to_auditorium(number, t_from, t_to,
                                                                                            capacity)
