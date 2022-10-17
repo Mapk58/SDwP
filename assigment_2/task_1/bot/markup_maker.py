@@ -3,7 +3,11 @@ from task1 import manager
 
 
 def create_markup(status):
-    if status in ['confirmation', 'creating_university', 'create_classroom_number_of_room', 'create_auditorium_number_of_room',\
+    """
+    Creating markups with respect to user's status.
+    """
+
+    if status in ['confirmation', 'creating_university', 'create_classroom_number_of_room', 'create_auditorium_number_of_room',
                   'enter_number_of_auditorium', 'enter_number_of_classroom']:  # list of states which don't have menu keys
         return types.ReplyKeyboardRemove()
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -16,7 +20,8 @@ def create_markup(status):
 
     elif status == 'menu':
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        markup.add(types.KeyboardButton('Add Classroom or Auditorium to institution'))
+        markup.add(types.KeyboardButton(
+            'Add Classroom or Auditorium to institution'))
         markup.add(types.KeyboardButton('Print institution summary'))
         markup.row(types.KeyboardButton('Assign activity to classroom'),
                    types.KeyboardButton('Assign activity to LectureAuditorium'))
@@ -25,7 +30,8 @@ def create_markup(status):
         return markup
     elif status == 'what_do_you_want_to_add':
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        markup.add(types.KeyboardButton('Classroom'), types.KeyboardButton('Auditorium'))
+        markup.add(types.KeyboardButton('Classroom'),
+                   types.KeyboardButton('Auditorium'))
         markup.add(types.KeyboardButton('Back to operations'))
         return markup
 
@@ -57,5 +63,3 @@ def _create_markup_by_list(buttons):
     for i in buttons:
         markup.add(types.KeyboardButton(i))
     return markup
-
-
