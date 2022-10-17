@@ -9,16 +9,20 @@ from threading import Thread
 import time
 import datetime as DT
 import pandas as pd
+import sys
 
 import Try_builder
 import Model
 from class_menu import Menu as M
-
-data_marker = 2
+import warnings
+warnings.simplefilter("ignore", UserWarning)
 
 def File_downloader(current_date):
-    global data_marker
-    """Collecting data"""
+    """
+    A function that runs on a separate thread. 
+    Every day the data is been downloaded from Google drive. 
+    Daily data is been concatenated to all data in day's beginning
+    """
     global Current_Df,data_marker,cur_date,model
     first_date = current_date
     data_marker = 0
@@ -41,9 +45,6 @@ def File_downloader(current_date):
                 print("\nData from " + str(current_date.date()) + " was collected")
             data_marker = 1
         
-            # cols = ['FPS', 'FPS_std', 'RTT', 'RTT_std', 'Dropped_frames']
-            # X_new = Df[cols].values
-            # model.train(X_new, Df['Stream_quality'].values)
             if timeout - time.time() > 0:
                 time.sleep(timeout-time.time())
             else:
@@ -51,12 +52,35 @@ def File_downloader(current_date):
         
         current_date += DT.timedelta(days=1)  
         cur_date = current_date
+
+def correct_date():
+    """
+    Function to enter the date from which the file upload starts    
+    """
+    start_date = '01/09/2022'
+    end_date = '30/09/2022'
+    start_date = DT.datetime.strptime(start_date,'%d/%m/%Y')
+    end_date = DT.datetime.strptime(end_date,'%d/%m/%Y')
+    while True:
+        try:
+            print("Please enter the date from 01/09/2022 to 30/09/2022")
+            print("Date format: dd/mm/yyyy")
+            "Enter the date"
+            Current_date = str(input())
+            Current_date = DT.datetime.strptime(Current_date,'%d/%m/%Y')
+            if Current_date > end_date or Current_date < start_date:
+                print("The date out of range.")
+                pass
+            else:
+                return Current_date
+        except:
+            print("Wrong format of date")
+            pass
     
-"Enter the date"
-Current_date = '01/09/2022'
-Current_date = DT.datetime.strptime(Current_date,'%d/%m/%Y')
-cur_date = Current_date
-th = Thread(target=File_downloader, args=(Current_date,))
+# if __name__ == '__main__':   
+    
+cur_date = correct_date()
+th = Thread(target=File_downloader, args=(cur_date,))
 th.start()
 
 while True:

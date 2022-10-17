@@ -15,16 +15,27 @@ import requests
 pd.options.mode.chained_assignment = None
 
 def One_day_dataframe(Current_date,model):
-    
-    #Change the format of current date to operate with it
-    file_index = Current_date.day - 1
-    
-    #Download file
-    with open ('Links_to_google', 'rb') as fp:
-        Links_list = pickle.load(fp)
-    #
-    url=Links_list[file_index]
-    url='https://drive.google.com/uc?id=' + url.split('/')[-2]
+    """
+    Loading data from google drive. Further, based on this data, important characteristics of the game session for 
+    each player are calculated and combined into a daily dataframe
+    """
+      
+    def download_link():
+        """
+        Function for compare current date and a link to google file
+        """
+        #Change the format of current date to operate with it
+        file_index = Current_date.day - 1
+        
+        #Download file
+        with open ('Links_to_google', 'rb') as fp:
+            Links_list = pickle.load(fp)
+        #Download file from the link
+        url=Links_list[file_index]
+        url='https://drive.google.com/uc?id=' + url.split('/')[-2]
+        return url            
+    url = download_link()
+
     while True:
         try:
             url2 = requests.get(url).text
