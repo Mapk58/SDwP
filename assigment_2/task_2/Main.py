@@ -14,8 +14,10 @@ import Try_builder
 import Model
 from class_menu import Menu as M
 
+data_marker = 2
 
 def File_downloader(current_date):
+    global data_marker
     """Collecting data"""
     global Current_Df,data_marker,cur_date,model
     first_date = current_date
@@ -23,7 +25,7 @@ def File_downloader(current_date):
     Df = pd.DataFrame()
     
     model = Model.LogRegression()
-    model.load('pretrained_data.pickle')
+    model.load('model.pickle')
     
     while True:
         Current_Df = Df.copy()
