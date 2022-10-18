@@ -179,10 +179,9 @@ def handle_message(id, m):
             capacity, number, conditioner = parameters_room(
                 um.users.get_input(id))
             classroom = Classroom(capacity, number, conditioner)
-            manager.institute(um.users.get_uni(id)).add(classroom)
+            reply = manager.institute(um.users.get_uni(id)).add(classroom) + '\nDo you want to add another room?'
             um.users.clear_input(id)
 
-            reply = "Classroom successfully added! \n" + "Do you want to add another room?"
             new_status = 'add_another_room_to_Innopolis_University'
         else:
             reply = 'Choose one option from below:'
@@ -209,10 +208,9 @@ def handle_message(id, m):
             capacity, number, conditioner = parameters_room(
                 um.users.get_input(id))
             auditorium = LectureAuditorium(capacity, number, conditioner)
-            manager.institute(um.users.get_uni(id)).add(auditorium)
+            reply = manager.institute(um.users.get_uni(id)).add(auditorium) + '\nDo you want to add another room?'
             um.users.clear_input(id)
 
-            reply = "Auditorium successfully added! \n" + "Do you want to add another room?"
             new_status = 'add_another_room_to_Innopolis_University'
         else:
             reply = 'Choose one option from below:'

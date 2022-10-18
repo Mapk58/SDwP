@@ -73,12 +73,14 @@ class EdInstitution:
         Add room to set in EdInstitution class attributes according to name of called class
         :param room: Class of room with params(capacity, number, conditioner, activities=[])
         """
-        if type(room).__name__ == 'Classroom':
+        if type(room).__name__ == 'Classroom' and room.number not in [i.number for i in self.classrooms]:
             self.classrooms.add(room)
             return 'Classroom successfully added!'
-        else:
+        elif type(room).__name__ == 'LectureAuditorium' and room.number not in [i.number for i in self.lecture_auditoriums]:
             self.lecture_auditoriums.add(room)
             return 'Lecture auditorium successfully added!'
+        else:
+            return 'This number already exists!'
 
     def remove(self, room):
         """
